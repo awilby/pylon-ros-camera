@@ -73,6 +73,8 @@ struct GigECameraTrait
     typedef Basler_GigECameraParams::UserSetDefaultSelectorEnums UserSetDefaultSelectorEnums;
     typedef Basler_GigECamera::LineFormatEnums LineFormatEnums;
     typedef Basler_GigECamera::GammaSelectorEnums GammaSelectorEnums;
+    typedef Basler_GigECamera::TemperatureStateEnums TemperatureStateEnums;
+    typedef Basler_GigECamera::TemperatureSelectorEnums DeviceTemperatureSelectorEnums;
 
 
     static inline AutoTargetBrightnessValueType convertBrightness(const int& value)
@@ -243,19 +245,19 @@ bool PylonGigECamera::applyCamSpecificStartupSettings(const PylonCameraParameter
                 cam_->UserSetSelector.SetValue(Basler_GigECameraParams::UserSetSelector_UserSet1);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 1 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "UserSet2")
             {
                 cam_->UserSetSelector.SetValue(Basler_GigECameraParams::UserSetSelector_UserSet2);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 2 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "UserSet3")
             {
                 cam_->UserSetSelector.SetValue(Basler_GigECameraParams::UserSetSelector_UserSet3);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 3 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "CurrentSetting")
             {
                 ROS_WARN("No User Set Is selected, Camera current setting will be used");
@@ -494,7 +496,7 @@ bool PylonGigECamera::setGamma(const float& target_gamma, float& reached_gamma)
             return false;
         }
     }
-    
+
     try
     {
         float gamma_to_set = target_gamma;
@@ -613,10 +615,10 @@ std::string PylonGigECamera::setBlackLevel(const int& value)
     {
         if ( GenApi::IsAvailable(cam_->BlackLevelRaw) )
         {
-            cam_->BlackLevelRaw.SetValue(value);   
+            cam_->BlackLevelRaw.SetValue(value);
             return "done";
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to change the image black level. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -638,10 +640,10 @@ int PylonGigECamera::getBlackLevel()
     {
         if ( GenApi::IsAvailable(cam_->BlackLevelRaw) )
         {
-            return static_cast<int>(cam_->BlackLevelRaw.GetValue());     
+            return static_cast<int>(cam_->BlackLevelRaw.GetValue());
         }
-        else 
-        { 
+        else
+        {
              return -10000;
         }
 
@@ -667,7 +669,7 @@ std::string PylonGigECamera::setNoiseReduction(const float& value)
                     cam_->NoiseReductionRaw.SetValue(value);
                     return "done";
                 }
-                else 
+                else
                 {
                     ROS_ERROR_STREAM("Error while trying to change the noise reduction value. The connected Camera not supporting this feature");
                     return "The connected Camera not supporting this feature";
@@ -678,11 +680,11 @@ std::string PylonGigECamera::setNoiseReduction(const float& value)
                 return "Error : Noise Reduction feature not available while PGI mode is off";
             }
         }
-        else 
+        else
             {
                 ROS_ERROR_STREAM("Error while trying to change the noise reduction value. The connected Camera not supporting this feature");
                 return "The connected Camera not supporting this feature";
-            } 
+            }
     }
     catch ( const GenICam::GenericException &e )
     {
@@ -700,7 +702,7 @@ float PylonGigECamera::getNoiseReduction()
         {
             return  static_cast<float>(cam_->NoiseReductionRaw.GetValue());
         }
-        else 
+        else
         {
             return -10000.0;
         }
@@ -725,7 +727,7 @@ std::string PylonGigECamera::setSharpnessEnhancement(const float& value)
                     cam_->SharpnessEnhancementRaw.SetValue(value);
                     return "done";
                 }
-                else 
+                else
                 {
                     ROS_ERROR_STREAM("Error while trying to change the sharpness enhancement value. The connected Camera not supporting this feature");
                     return "The connected Camera not supporting this feature";
@@ -736,11 +738,11 @@ std::string PylonGigECamera::setSharpnessEnhancement(const float& value)
                 return "Error : Sharpness Enhancement feature not available while PGI mode is off";
             }
         }
-        else 
+        else
             {
                 ROS_ERROR_STREAM("Error while trying to change the sharpness enhancement value. The connected Camera not supporting this feature");
                 return "The connected Camera not supporting this feature";
-            } 
+            }
     }
     catch ( const GenICam::GenericException &e )
     {
@@ -758,7 +760,7 @@ float PylonGigECamera::getSharpnessEnhancement()
         {
             return static_cast<float>(cam_->SharpnessEnhancementRaw.GetValue());
         }
-        else 
+        else
         {
             return -10000.0;
         }
@@ -775,11 +777,11 @@ std::string PylonGigECamera::setAcquisitionFrameCount(const int& frameCount)
     try
     {
         if ( GenApi::IsAvailable(cam_->AcquisitionFrameCount) )
-        {  
-            cam_->AcquisitionFrameCount.SetValue(frameCount);   
+        {
+            cam_->AcquisitionFrameCount.SetValue(frameCount);
             return "done";
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to change the Acquisition frame count. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -799,10 +801,10 @@ int PylonGigECamera::getAcquisitionFrameCount()
     try
     {
         if ( GenApi::IsAvailable(cam_->AcquisitionFrameCount) )
-        {  
+        {
             return static_cast<int>(cam_->AcquisitionFrameCount.GetValue());
         }
-        else 
+        else
         {
              return -10000; // Not available
         }
@@ -820,15 +822,15 @@ std::string PylonGigECamera::setTriggerSelector(const int& mode)
     try
     {
         if ( GenApi::IsAvailable(cam_->TriggerSelector) )
-        {  
+        {
             if (mode == 0)
             {
-            cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_FrameStart);   
+            cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_FrameStart);
             return "done";
             }
             else if (mode == 1)
             {
-            cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_AcquisitionStart);   
+            cam_->TriggerSelector.SetValue(TriggerSelectorEnums::TriggerSelector_AcquisitionStart);
             return "done";
             }
             else
@@ -836,7 +838,7 @@ std::string PylonGigECamera::setTriggerSelector(const int& mode)
                 return "Error: unknown value";
             }
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to change the Acquisition frame count. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -856,13 +858,13 @@ int PylonGigECamera::getTriggerSelector()
     try
     {
         if ( GenApi::IsAvailable(cam_->TriggerSelector) )
-        {  
+        {
             if (cam_->TriggerSelector.GetValue() == TriggerSelectorEnums::TriggerSelector_FrameStart)
             {
             return 0; // FrameStart
             }
             else if (cam_->TriggerSelector.GetValue() == TriggerSelectorEnums::TriggerSelector_AcquisitionStart)
-            { 
+            {
             return 1; // AcquisitionStart
             }
             else
@@ -870,9 +872,9 @@ int PylonGigECamera::getTriggerSelector()
                 return -3; // Unknown
             }
         }
-        else 
+        else
         {
-             return -1; // Not avalibale 
+             return -1; // Not avalibale
         }
 
     }
@@ -908,12 +910,12 @@ std::string PylonGigECamera::setTriggerSource(const int& source)
             {
                 cam_->TriggerSource.SetValue(TriggerSourceEnums::TriggerSource_Action1);
             }
-            else 
+            else
             {
                 return "Error: unknown value";
             }
         }
-        else 
+        else
         {
             ROS_ERROR_STREAM("Error while trying to change the trigger mode. The connected Camera not supporting this feature");
             return "The connected Camera not supporting this feature";
@@ -954,12 +956,12 @@ int PylonGigECamera::getTriggerSource()
             {
                 return 4 ; // Action1
             }
-            else 
+            else
             {
                 return -3; // Unknown
             }
         }
-        else 
+        else
         {
             return -1; // Not available
         }
@@ -980,7 +982,7 @@ std::string PylonGigECamera::setTriggerDelay(const float& delayValue)
 
             cam_->TriggerDelayAbs.SetValue(delayValue);
         }
-        else 
+        else
         {
             ROS_ERROR_STREAM("Error while trying to change the trigger delay. The connected Camera not supporting this feature");
             return "The connected Camera not supporting this feature";
@@ -1003,7 +1005,7 @@ float PylonGigECamera::getTriggerDelay()
 
              return static_cast<float>(cam_->TriggerDelayAbs.GetValue());
         }
-        else 
+        else
         {
             return -10000.0; // Not available
         }
@@ -1028,12 +1030,12 @@ std::string PylonGigECamera::setLineMode(const int& value)
             {
                 cam_->LineMode.SetValue(LineModeEnums::LineMode_Output);
             }
-            else 
+            else
             {
                 return "Error: unknown value";
             }
         }
-        else 
+        else
         {
             ROS_ERROR_STREAM("Error : the selected line number dose not have change line mode feature");
             return "Error : the selected line number dose not have change line mode feature";
@@ -1042,7 +1044,7 @@ std::string PylonGigECamera::setLineMode(const int& value)
     catch ( const GenICam::GenericException &e )
     {
         ROS_ERROR_STREAM("An exception while setting the line mode occurred:" << e.GetDescription());
-        return e.GetDescription(); 
+        return e.GetDescription();
     }
     return "done";
 }
@@ -1052,18 +1054,18 @@ std::string PylonGigECamera::setLineDebouncerTime(const float& value)
 {
     try
     {   if ( GenApi::IsAvailable(cam_->LineDebouncerTimeAbs) )
-        {   
+        {
             if ( cam_->LineMode.GetValue() == Basler_GigECameraParams::LineMode_Input)
             {
                 cam_->LineDebouncerTimeAbs.SetValue(value);
             }
-            else 
+            else
             {
                 return "Error: can't set the line debouncer time, is the selected line number is an input";
             }
-            
+
         }
-        else 
+        else
         {
             ROS_ERROR_STREAM("Error while trying to set the line debouncer time. The connected Camera not supporting this feature");
             return "The connected Camera not supporting this feature";
@@ -1072,7 +1074,7 @@ std::string PylonGigECamera::setLineDebouncerTime(const float& value)
     catch ( const GenICam::GenericException &e )
     {
         ROS_ERROR_STREAM("An exception while setting the line debouncer time occurred:" << e.GetDescription());
-        return e.GetDescription(); 
+        return e.GetDescription();
     }
     return "done";
 }
@@ -1105,21 +1107,21 @@ std::string PylonGigECamera::setBalanceWhiteAuto(const int& mode)
             if (mode == 0)
             {
                 cam_->BalanceWhiteAuto.SetValue(BalanceWhiteAutoEnums::BalanceWhiteAuto_Off);
-            }  
+            }
             else if (mode == 1)
             {
                 cam_->BalanceWhiteAuto.SetValue(BalanceWhiteAutoEnums::BalanceWhiteAuto_Once);
-            } 
+            }
             else if (mode == 2)
             {
                 cam_->BalanceWhiteAuto.SetValue(BalanceWhiteAutoEnums::BalanceWhiteAuto_Continuous);
-            } 
-            else 
+            }
+            else
             {
                 return "Error: unknown value";
             }
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to change the balance white auto. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -1139,25 +1141,25 @@ int PylonGigECamera::getBalanceWhiteAuto()
     try
     {
         if ( GenApi::IsAvailable(cam_->AutoFunctionAOISelector) && GenApi::IsAvailable(cam_->BalanceWhiteAuto) && cam_->AutoFunctionAOISelector.GetValue() == AutoFunctionROISelectorEnums::AutoFunctionAOISelector_AOI2)
-        {  
+        {
             if (cam_->BalanceWhiteAuto.GetValue() == BalanceWhiteAutoEnums::BalanceWhiteAuto_Off)
             {
                 return 0; // Off
-            }  
+            }
             else if (cam_->BalanceWhiteAuto.GetValue() == BalanceWhiteAutoEnums::BalanceWhiteAuto_Once)
             {
                 return 1; // Once
-            } 
+            }
             else if (cam_->BalanceWhiteAuto.GetValue() == BalanceWhiteAutoEnums::BalanceWhiteAuto_Continuous)
             {
                 return 2; // Continuous
-            } 
-            else 
+            }
+            else
             {
                 return -3; // Unknown
             }
         }
-        else 
+        else
         {
              return -1; //Not available
         }
@@ -1174,29 +1176,29 @@ std::string PylonGigECamera::setLightSourcePreset(const int& mode)
     try
     {
         if ( GenApi::IsAvailable(cam_->LightSourceSelector))
-        {  
+        {
             if (mode == 0)
             {
                 cam_->LightSourceSelector.SetValue(LightSourcePresetEnums::LightSourceSelector_Off);
-            }  
+            }
             else if (mode == 1)
             {
                 cam_->LightSourceSelector.SetValue(LightSourcePresetEnums::LightSourceSelector_Daylight); //(at about 5000K)
-            } 
+            }
             else if (mode == 2)
             {
                 cam_->LightSourceSelector.SetValue(LightSourcePresetEnums::LightSourceSelector_Daylight6500K);
-            } 
+            }
             else if (mode == 3)
             {
                 cam_->LightSourceSelector.SetValue(LightSourcePresetEnums::LightSourceSelector_Tungsten);
-            } 
-            else 
+            }
+            else
             {
                 return "Error: unknown value";
             }
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to change the light source preset. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -1216,29 +1218,29 @@ int PylonGigECamera::getLightSourcePreset()
     try
     {
         if ( GenApi::IsAvailable(cam_->LightSourceSelector))
-        {  
+        {
             if (cam_->LightSourceSelector.GetValue() == LightSourcePresetEnums::LightSourceSelector_Off)
             {
                 return 0; // Off
-            }  
+            }
             else if (cam_->LightSourceSelector.GetValue() == LightSourcePresetEnums::LightSourceSelector_Daylight)
             {
                 return 1; //Daylight(~ Daylight5000K)
-            } 
+            }
             else if (cam_->LightSourceSelector.GetValue() == LightSourcePresetEnums::LightSourceSelector_Daylight6500K)
             {
                 return 2; //Daylight6500K
-            } 
+            }
             else if (cam_->LightSourceSelector.GetValue() == LightSourcePresetEnums::LightSourceSelector_Tungsten)
             {
                 return 3;
-            } 
-            else 
+            }
+            else
             {
                 return -3; // Unknown
             }
         }
-        else 
+        else
         {
             return -1; // Not available
         }
@@ -1255,41 +1257,41 @@ std::string PylonGigECamera::setUserSetDefaultSelector(const int& set)
     try
     {
         if ( GenApi::IsAvailable(cam_->UserSetDefaultSelector))
-        {  
+        {
             if (set == 0)
             {
                 cam_->UserSetDefaultSelector.SetValue(UserSetDefaultSelectorEnums::UserSetDefaultSelector_Default);
-            }  
+            }
             else if (set == 1)
             {
                 cam_->UserSetDefaultSelector.SetValue(UserSetDefaultSelectorEnums::UserSetDefaultSelector_UserSet1);
-            } 
+            }
             else if (set == 2)
             {
                 cam_->UserSetDefaultSelector.SetValue(UserSetDefaultSelectorEnums::UserSetDefaultSelector_UserSet2);
-            } 
+            }
             else if (set == 3)
             {
                 cam_->UserSetDefaultSelector.SetValue(UserSetDefaultSelectorEnums::UserSetDefaultSelector_UserSet3);
-            } 
+            }
             else if (set == 4)
             {
                 cam_->UserSetDefaultSelector.SetValue(UserSetDefaultSelectorEnums::UserSetDefaultSelector_HighGain);
-            } 
+            }
             else if (set == 5)
             {
                 cam_->UserSetDefaultSelector.SetValue(UserSetDefaultSelectorEnums::UserSetDefaultSelector_AutoFunctions);
-            } 
+            }
             else if (set == 6)
             {
                 cam_->UserSetDefaultSelector.SetValue(UserSetDefaultSelectorEnums::UserSetDefaultSelector_ColorRaw);
-            } 
-            else 
+            }
+            else
             {
                 return "Error: unknown value";
             }
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to select the user default set. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -1309,41 +1311,41 @@ int PylonGigECamera::getUserSetDefaultSelector()
     try
     {
         if ( GenApi::IsAvailable(cam_->UserSetDefaultSelector))
-        {  
+        {
             if (cam_->UserSetDefaultSelector.GetValue() == UserSetDefaultSelectorEnums::UserSetDefaultSelector_Default)
             {
                 return 0;
-            }  
+            }
             else if (cam_->UserSetDefaultSelector.GetValue() == UserSetDefaultSelectorEnums::UserSetDefaultSelector_UserSet1)
             {
                 return 1; // UserSet1
-            } 
+            }
             else if (cam_->UserSetDefaultSelector.GetValue() == UserSetDefaultSelectorEnums::UserSetDefaultSelector_UserSet2)
             {
                 return 2; // UserSet2
-            } 
+            }
             else if (cam_->UserSetDefaultSelector.GetValue() == UserSetDefaultSelectorEnums::UserSetDefaultSelector_UserSet3)
             {
                 return 3; // UserSet3
-            } 
+            }
             else if (cam_->UserSetDefaultSelector.GetValue() == UserSetDefaultSelectorEnums::UserSetDefaultSelector_HighGain)
             {
                 return 4; // HighGain
-            } 
+            }
             else if (cam_->UserSetDefaultSelector.GetValue() == UserSetDefaultSelectorEnums::UserSetDefaultSelector_AutoFunctions)
             {
                 return 5; // AutoFunctions
-            } 
+            }
             else if (cam_->UserSetDefaultSelector.GetValue() == UserSetDefaultSelectorEnums::UserSetDefaultSelector_ColorRaw)
             {
                 return 6; // ColorRaw
-            } 
-            else 
+            }
+            else
             {
                 return -3; // Unknown
             }
         }
-        else 
+        else
         {
              return -1; // Not available
         }
@@ -1367,23 +1369,23 @@ std::string PylonGigECamera::setGammaSelector(const int& gammaSelector)
 try
     {
         if ( GenApi::IsAvailable(cam_->GammaSelector))
-        {  
+        {
             if (gammaSelector == 0)
             {
                 cam_-> GammaSelector.SetValue(Basler_GigECameraParams::GammaSelector_User);
                 return "done";
-            }  
+            }
             else if (gammaSelector == 1)
             {
                 cam_-> GammaSelector.SetValue(Basler_GigECameraParams::GammaSelector_sRGB );
                 return "done";
-            } 
-            else 
+            }
+            else
             {
                 return "Error: unknown value";
             }
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to set the gamma selector. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -1419,6 +1421,80 @@ std::string PylonGigECamera::gammaEnable(const bool& enable)
         return e.GetDescription();
     }
 }
+
+template <>
+std::string PylonGigECamera::getTemperatureState()
+{
+    try
+    {
+        if ( GenApi::IsAvailable(cam_->TemperatureState) )
+        {
+
+          TemperatureStateEnums curState = cam_->TemperatureState.GetValue();
+
+          if (curState == TemperatureStateEnums::TemperatureState_Ok) {
+
+            return "Ok";
+
+          } else if (curState == TemperatureStateEnums::TemperatureState_Critical) {
+
+            return "Critical Temperature Reached";
+
+          } else if (curState == TemperatureStateEnums::TemperatureState_Error) {
+
+            return "Error: Over Temperature!";
+
+          }
+
+        }
+        else
+        {
+             return "Temperature State Unavailable.";
+        }
+
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        ROS_ERROR_STREAM("An exception while getting the camera temperature state occurred:" << e.GetDescription());
+        return "Error getting temperature state.";
+    }
+}
+
+template <>
+float PylonGigECamera::getCameraCoreTemperature()
+{
+
+    float core_temp = -10000.0;
+
+    try
+    {
+        if ( GenApi::IsAvailable(cam_->TemperatureSelector) )
+        {
+
+          // Select the core board temperature sensor
+          cam_->TemperatureSelector.SetValue(DeviceTemperatureSelectorEnums::TemperatureSelector_Coreboard);
+
+          // Read the core board temperature
+          double temp_d = cam_->TemperatureAbs.GetValue();
+          core_temp = (float) temp_d;
+
+          return core_temp;
+
+        }
+        else
+        {
+             return core_temp;
+        }
+
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        ROS_ERROR_STREAM("An exception while getting the camera temperature state occurred:" << e.GetDescription());
+        return core_temp;
+    }
+}
+
+
 
 }  // namespace pylon_camera
 

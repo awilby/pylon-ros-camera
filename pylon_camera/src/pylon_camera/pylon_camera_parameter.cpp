@@ -66,6 +66,7 @@ PylonCameraParameter::PylonCameraParameter() :
         mtu_size_(3000),
         enable_status_publisher_(false),
         enable_current_params_publisher_(false),
+        enable_camera_status_publisher_(true),
         inter_pkg_delay_(1000),
         startup_user_set_(""),
         shutter_mode_(SM_DEFAULT),
@@ -237,6 +238,11 @@ void PylonCameraParameter::readFromRosParameterServer(const ros::NodeHandle& nh)
         nh.getParam("enable_current_params_publisher", enable_current_params_publisher_);
     }
 
+    if ( nh.hasParam("enable_camera_status_publisher") )
+    {
+        nh.getParam("enable_camera_status_publisher", enable_camera_status_publisher_);
+    }
+
     if ( nh.hasParam("gige/inter_pkg_delay") )
     {
         nh.getParam("gige/inter_pkg_delay", inter_pkg_delay_);
@@ -371,7 +377,7 @@ const std::string& PylonCameraParameter::imageEncoding() const
     return image_encoding_;
 }
 
-bool PylonCameraParameter::setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format) 
+bool PylonCameraParameter::setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format)
 {
     try
     {

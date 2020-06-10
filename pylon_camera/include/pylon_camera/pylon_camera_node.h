@@ -53,10 +53,11 @@
 #include <camera_control_msgs/SetGamma.h>
 #include <camera_control_msgs/SetROI.h>
 #include <camera_control_msgs/SetSleeping.h>
-#include <camera_control_msgs/SetIntegerValue.h>   
-#include <camera_control_msgs/SetFloatValue.h> 
-#include <camera_control_msgs/SetStringValue.h> 
-#include <camera_control_msgs/currentParams.h> 
+#include <camera_control_msgs/SetIntegerValue.h>
+#include <camera_control_msgs/SetFloatValue.h>
+#include <camera_control_msgs/SetStringValue.h>
+#include <camera_control_msgs/currentParams.h>
+#include <camera_control_msgs/cameraStatus.h>
 
 #include <std_srvs/SetBool.h>
 #include <std_srvs/Trigger.h>
@@ -162,7 +163,7 @@ protected:
      */
     bool setROI(const sensor_msgs::RegionOfInterest target_roi,
                 sensor_msgs::RegionOfInterest& reached_roi);
-    
+
     /**
      * Update the horizontal binning_x factor to get downsampled images
      * @param target_binning_x the target horizontal binning_x factor
@@ -191,7 +192,7 @@ protected:
      */
     bool setBinningCallback(camera_control_msgs::SetBinning::Request &req,
                             camera_control_msgs::SetBinning::Response &res);
-    
+
     /**
      * Service callback for updating the cameras roi setting
      * @param req request
@@ -200,7 +201,7 @@ protected:
      */
     bool setROICallback(camera_control_msgs::SetROI::Request &req,
 			camera_control_msgs::SetROI::Response &res);
-    
+
     /**
      * Update the exposure value on the camera
      * @param target_exposure the targeted exposure
@@ -378,7 +379,7 @@ protected:
     bool waitForCamera(const ros::Duration& timeout) const;
 
     /**
-     * Service callback for setting camera x-axis offset 
+     * Service callback for setting camera x-axis offset
      * @param req request
      * @param res response
      * @return true on success
@@ -386,7 +387,7 @@ protected:
     bool setOffsetXCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * Service callback for setting camera y-axis offset 
+     * Service callback for setting camera y-axis offset
      * @param req request
      * @param res response
      * @return true on success
@@ -394,7 +395,7 @@ protected:
     bool setOffsetYCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * Method to set the offset in the camera x-axis or y-axis.  
+     * Method to set the offset in the camera x-axis or y-axis.
      * @param offsetValue the targeted offset value.
      * @param xAxis when true set the oddset in the x-axis, otherwise in the y-axis.
      * @return error message if an error occurred or done message otherwise.
@@ -426,7 +427,7 @@ protected:
     std::string reverseXY(const bool& data, bool around_x);
 
     /**
-     * Service callback for increasing/decreasing the image black level 
+     * Service callback for increasing/decreasing the image black level
      * @param req request
      * @param res response
      * @return true on success
@@ -434,14 +435,14 @@ protected:
     bool setBlackLevelCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * method for increasing/decreasing the image black level 
+     * method for increasing/decreasing the image black level
      * @param value the new black level value
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setBlackLevel(const int& value);
 
     /**
-     * Service callback for setting the PGI mode 
+     * Service callback for setting the PGI mode
      * @param req request
      * @param res response
      * @return true on success
@@ -449,14 +450,14 @@ protected:
     bool setPGIModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
     /**
-     * method for setting the PGI mode. 
+     * method for setting the PGI mode.
      * @param on : true = on, false = off.
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setPGIMode(const bool& on);
 
     /**
-     * Service callback for setting the demosaicing mode 
+     * Service callback for setting the demosaicing mode
      * @param req request
      * @param res response
      * @return true on success
@@ -464,14 +465,14 @@ protected:
     bool setDemosaicingModeCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * method for setting the demosaicing mode. 
+     * method for setting the demosaicing mode.
      * @param mode : 0 = simple, 1 = Basler PGI.
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setDemosaicingMode(const int& mode);
 
     /**
-     * Service callback for setting the noise reduction value 
+     * Service callback for setting the noise reduction value
      * @param req request
      * @param res response
      * @return true on success
@@ -479,14 +480,14 @@ protected:
     bool setNoiseReductionCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
 
     /**
-     * method for setting the noise reduction value 
+     * method for setting the noise reduction value
      * @param value : targeted noise reduction value (range : 0.0 to 0.2).
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setNoiseReduction(const float& value);
 
     /**
-     * Service callback for setting the sharpness enhancement value. 
+     * Service callback for setting the sharpness enhancement value.
      * @param req request
      * @param res response
      * @return true on success
@@ -494,14 +495,14 @@ protected:
     bool setSharpnessEnhancementCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
 
     /**
-     * method for setting the sharpness enhancement value. 
+     * method for setting the sharpness enhancement value.
      * @param value : targeted sharpness enhancement value (range : 1.0 to 3.98438).
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setSharpnessEnhancement(const float& value);
 
     /**
-     * Service callback for setting the camera light source preset 
+     * Service callback for setting the camera light source preset
      * @param req request
      * @param res response
      * @return true on success
@@ -509,14 +510,14 @@ protected:
     bool setLightSourcePresetCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * Method to set the camera light source preset  
+     * Method to set the camera light source preset
      * @param mode : 0 = off, 1 = Daylight5000K, 2 = Daylight6500K, 3 = Tungsten2800K
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setLightSourcePreset(const int& mode);
 
     /**
-     * Service callback for setting the camera balance white auto 
+     * Service callback for setting the camera balance white auto
      * @param req request
      * @param res response
      * @return true on success
@@ -524,7 +525,7 @@ protected:
     bool setBalanceWhiteAutoCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * Method to set the camera balance white auto 
+     * Method to set the camera balance white auto
      * @param mode : 0 = off , 1 = once, 2 = continuous
      * @return error message if an error occurred or done message otherwise.
      */
@@ -569,7 +570,7 @@ protected:
     bool setTriggerSelectorCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
      /**
-     * Method to set the trigger selector   
+     * Method to set the trigger selector
      * @param mode : 0 = Frame Start, 1 = Frame Burst Start (ace USB) / Acquisition Start (ace GigE)
      * @return error message if an error occurred or done message otherwise.
      */
@@ -584,7 +585,7 @@ protected:
     bool setTriggerModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
      /**
-     * Method to set the trigger mode   
+     * Method to set the trigger mode
      * @param value : false = off, true = on
      * @return error message if an error occurred or done message otherwise.
      */
@@ -599,7 +600,7 @@ protected:
     bool executeSoftwareTriggerCallback(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
 
      /**
-     * Method to execute a software trigger   
+     * Method to execute a software trigger
      * @return error message if an error occurred or done message otherwise.
      */
     std::string executeSoftwareTrigger();
@@ -614,7 +615,7 @@ protected:
 
      /**
      * Method to set the camera trigger source.
-     * @param source : 0 = software, 1 = Line1, 2 = Line3, 3 = Line4, 4 = Action1(only selected GigE Camera)  
+     * @param source : 0 = software, 1 = Line1, 2 = Line3, 3 = Line4, 4 = Action1(only selected GigE Camera)
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setTriggerSource(const int& source);
@@ -628,7 +629,7 @@ protected:
     bool setTriggerActivationCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * Method to set camera trigger activation type  
+     * Method to set camera trigger activation type
      * @param value : 0 = RigingEdge, 1 = FallingEdge
      * @return error message if an error occurred or done message otherwise.
      */
@@ -643,8 +644,8 @@ protected:
     bool setTriggerDelayCallback(camera_control_msgs::SetFloatValue::Request &req, camera_control_msgs::SetFloatValue::Response &res);
 
     /**
-     * Method to set camera trigger delay value  
-     * @param delayValue required dely value in µs 
+     * Method to set camera trigger delay value
+     * @param delayValue required dely value in µs
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setTriggerDelay(const float& value);
@@ -659,7 +660,7 @@ protected:
 
     /**
      * Method to set camera line selector
-     * @param value : 0 = line1, 1 = line2, 2 = line3, 3 = line4  
+     * @param value : 0 = line1, 1 = line2, 2 = line3, 3 = line4
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setLineSelector(const int& value);
@@ -674,7 +675,7 @@ protected:
 
     /**
      * Method to set camera line Mode
-     * @param value : 0 = input, 1 = output   
+     * @param value : 0 = input, 1 = output
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setLineMode(const int& value);
@@ -689,7 +690,7 @@ protected:
 
     /**
      * Method to set camera line source
-     * @param value : 0 = exposure active  
+     * @param value : 0 = exposure active
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setLineSource(const int& value);
@@ -786,7 +787,7 @@ protected:
 
 
     /**
-     * Service callback for setting the device link throughput limit mode 
+     * Service callback for setting the device link throughput limit mode
      * @param req request
      * @param res response
      * @return true on success
@@ -794,14 +795,14 @@ protected:
     bool setDeviceLinkThroughputLimitModeCallback(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
     /**
-     * Method to set device link throughput limit mode 
+     * Method to set device link throughput limit mode
      * @param turnOn : true = on , false = Off
      * @return error message if an error occurred or done message otherwise.
      */
     std::string setDeviceLinkThroughputLimitMode(const bool& turnOn);
 
     /**
-     * Service callback for setting the device link throughput limit  
+     * Service callback for setting the device link throughput limit
      * @param req request
      * @param res response
      * @return true on success
@@ -809,7 +810,7 @@ protected:
     bool setDeviceLinkThroughputLimitCallback(camera_control_msgs::SetIntegerValue::Request &req, camera_control_msgs::SetIntegerValue::Response &res);
 
     /**
-     * Method to set device link throughput limit  
+     * Method to set device link throughput limit
      * @param limit : device link throughput limit  Bytes/second
      * @return error message if an error occurred or done message otherwise.
      */
@@ -861,6 +862,11 @@ protected:
      * Method to collect and publish the current camera parameters
      */
     void currentParamPub();
+
+    /**
+     * Method to collect and publish the current camera status (temperature, etc.)
+     */
+    void cameraStatusPub();
 
     /**
      * Service callback for setting the camera image encoding
@@ -932,7 +938,7 @@ protected:
     ros::ServiceServer set_brightness_srv_;
     ros::ServiceServer set_sleeping_srv_;
     ros::ServiceServer set_offset_x_srv_;
-    ros::ServiceServer set_offset_y_srv_;    
+    ros::ServiceServer set_offset_y_srv_;
     ros::ServiceServer reverse_x_srv_;
     ros::ServiceServer reverse_y_srv_;
     ros::ServiceServer set_black_level_srv_;
@@ -962,21 +968,25 @@ protected:
     ros::ServiceServer set_device_link_throughput_limit_mode_srv_;
     ros::ServiceServer set_device_link_throughput_limit_srv_;
     ros::ServiceServer set_image_encoding_srv_;
-    ros::ServiceServer reset_device_srv_;    
-    ros::ServiceServer start_grabbing_srv_;  
-    ros::ServiceServer stop_grabbing_srv_;  
-    ros::ServiceServer set_max_transfer_size_srv_; 
-    ros::ServiceServer set_gamma_selector_srv; 
-    ros::ServiceServer gamma_enable_srv; 
+    ros::ServiceServer reset_device_srv_;
+    ros::ServiceServer start_grabbing_srv_;
+    ros::ServiceServer stop_grabbing_srv_;
+    ros::ServiceServer set_max_transfer_size_srv_;
+    ros::ServiceServer set_gamma_selector_srv;
+    ros::ServiceServer gamma_enable_srv;
     std::vector<ros::ServiceServer> set_user_output_srvs_;
 
     // DNB component status publisher
     ros::Publisher componentStatusPublisher;
     dnb_msgs::ComponentStatus cm_status;
-    
+
     // current params publisher
     ros::Publisher currentParamsPublisher;
     camera_control_msgs::currentParams params;
+
+    // camera status publisher (temperature, etc.)
+    ros::Publisher cameraStatusPublisher;
+    camera_control_msgs::cameraStatus camera_status;
 
 
 

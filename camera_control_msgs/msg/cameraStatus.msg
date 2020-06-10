@@ -1,4 +1,8 @@
 # Monitor Current Camera Status
+Header header
+
+# Camera Temperature State
+string state
 
 # Camera Core Temperature
 sensor_msgs/Temperature core_temp

@@ -72,6 +72,8 @@ struct USBCameraTrait
     typedef Basler_UsbCameraParams::UserSetSelectorEnums UserSetSelectorEnums;
     typedef Basler_UsbCameraParams::UserSetDefaultEnums UserSetDefaultSelectorEnums;
     typedef Basler_UsbCameraParams::LineFormatEnums LineFormatEnums;
+    typedef Basler_UsbCameraParams::TemperatureStateEnums TemperatureStateEnums;
+    typedef Basler_UsbCameraParams::DeviceTemperatureSelectorEnums DeviceTemperatureSelectorEnums;
 
 
     static inline AutoTargetBrightnessValueType convertBrightness(const int& value)
@@ -148,19 +150,19 @@ bool PylonUSBCamera::applyCamSpecificStartupSettings(const PylonCameraParameter&
                 cam_->UserSetSelector.SetValue(Basler_UsbCameraParams::UserSetSelector_UserSet1);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 1 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "UserSet2")
             {
                 cam_->UserSetSelector.SetValue(Basler_UsbCameraParams::UserSetSelector_UserSet2);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 2 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "UserSet3")
             {
                 cam_->UserSetSelector.SetValue(Basler_UsbCameraParams::UserSetSelector_UserSet3);
                 cam_->UserSetLoad.Execute();
                 ROS_WARN("User Set 3 Loaded");
-            } 
+            }
         else if (parameters.startup_user_set_ == "CurrentSetting")
             {
                 ROS_WARN("No User Set Is selected, Camera current setting will be used");
@@ -392,11 +394,11 @@ std::string PylonUSBCamera::setAcquisitionFrameCount(const int& frameCount)
     try
     {
         if ( GenApi::IsAvailable(cam_->AcquisitionBurstFrameCount) )
-        {  
-            cam_->AcquisitionBurstFrameCount.SetValue(frameCount);   
+        {
+            cam_->AcquisitionBurstFrameCount.SetValue(frameCount);
             return "done";
         }
-        else 
+        else
         {
              ROS_ERROR_STREAM("Error while trying to change the Acquisition frame count. The connected Camera not supporting this feature");
              return "The connected Camera not supporting this feature";
@@ -416,10 +418,10 @@ int PylonUSBCamera::getAcquisitionFrameCount()
     try
     {
         if ( GenApi::IsAvailable(cam_->AcquisitionBurstFrameCount) )
-        {  
+        {
             return static_cast<int>(cam_->AcquisitionBurstFrameCount.GetValue());
         }
-        else 
+        else
         {
              return -10000;
         }
@@ -434,13 +436,85 @@ int PylonUSBCamera::getAcquisitionFrameCount()
 template <>
 std::string PylonUSBCamera::setGammaSelector(const int& gammaSelector)
 {
-    return "Error, the connect camera not supporting this feature";
+    return "Error, the connected camera does not support this feature";
 }
 
 template <>
 std::string PylonUSBCamera::gammaEnable(const bool& enable)
 {
-    return "Error, the connect camera not supporting this feature";
+    return "Error, the connected camera does not support this feature";
+}
+
+template <>
+std::string PylonUSBCamera::getTemperatureState()
+{
+    try
+    {
+        if ( GenApi::IsAvailable(cam_->TemperatureState) )
+        {
+
+          TemperatureStateEnums curState = cam_->TemperatureState.GetValue();
+
+          if (curState == TemperatureStateEnums::TemperatureState_Ok) {
+
+            return "Ok";
+
+          } else if (curState == TemperatureStateEnums::TemperatureState_Critical) {
+
+            return "Critical Temperature Reached";
+
+          } else if (curState == TemperatureStateEnums::TemperatureState_Error) {
+
+            return "Error: Over Temperature!";
+
+          }
+
+        }
+        else
+        {
+             return "Temperature State Unavailable.";
+        }
+
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        ROS_ERROR_STREAM("An exception while getting the camera temperature state occurred:" << e.GetDescription());
+        return "Error getting temperature state.";
+    }
+}
+
+template <>
+float PylonUSBCamera::getCameraCoreTemperature()
+{
+
+    float core_temp = -10000.0;
+
+    try
+    {
+        if ( GenApi::IsAvailable(cam_->DeviceTemperatureSelector) )
+        {
+
+          // Select the core board temperature sensor
+          cam_->DeviceTemperatureSelector.SetValue(DeviceTemperatureSelectorEnums::DeviceTemperatureSelector_Coreboard);
+
+          // Read the core board temperature
+          double temp_d = cam_->DeviceTemperature.GetValue();
+          core_temp = (float) temp_d;
+
+          return core_temp;
+
+        }
+        else
+        {
+             return core_temp;
+        }
+
+    }
+    catch ( const GenICam::GenericException &e )
+    {
+        ROS_ERROR_STREAM("An exception while getting the camera temperature state occurred:" << e.GetDescription());
+        return core_temp;
+    }
 }
 
 }  // namespace pylon_camera

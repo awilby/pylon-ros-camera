@@ -99,7 +99,7 @@ public:
     /**
      * Setter for the image encoding
      */
-    bool setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format); 
+    bool setimageEncodingParam(const ros::NodeHandle& nh, const std::string& format);
 
     /**
      * Setter for the frame_rate_ initially set from ros-parameter server
@@ -279,9 +279,14 @@ public:
     bool enable_current_params_publisher_;
 
     /**
+     * a flag used to enable/disable the camera status publisher.
+     */
+    bool enable_camera_status_publisher_;
+
+    /**
      * The startup user set.
      */
-    std::string startup_user_set_;    
+    std::string startup_user_set_;
 
     /**
      * The inter-package delay in ticks. Only used for GigE cameras.

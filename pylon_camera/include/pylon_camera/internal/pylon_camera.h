@@ -77,7 +77,7 @@ public:
 
     virtual bool setROI(const sensor_msgs::RegionOfInterest target_roi,
                         sensor_msgs::RegionOfInterest& reached_roi);
-    
+
     virtual bool setBinningX(const size_t& target_binning_x,
                              size_t& reached_binning_x);
 
@@ -102,11 +102,11 @@ public:
     virtual std::vector<int> detectAndCountNumUserOutputs();
 
     virtual bool setUserOutput(const int& output_id, const bool& value);
-    
+
     virtual size_t currentOffsetX();
 
     virtual size_t currentOffsetY();
-    
+
     virtual sensor_msgs::RegionOfInterest currentROI();
 
     virtual size_t currentBinningX();
@@ -151,7 +151,7 @@ public:
 
     virtual float exposureStep();
 
-    virtual std::string setOffsetXY(const int& offsetValue, bool xAxis);  
+    virtual std::string setOffsetXY(const int& offsetValue, bool xAxis);
 
     virtual std::string reverseXY(const bool& reverse_x,bool around_x);
 
@@ -243,17 +243,21 @@ public:
 
     virtual std::string setDeviceLinkThroughputLimit(const int& limit);
 
-    virtual std::string triggerDeviceReset();  
+    virtual std::string triggerDeviceReset();
 
-    virtual std::string grabbingStarting();  
+    virtual std::string grabbingStarting();
 
-    virtual std::string grabbingStopping();  
+    virtual std::string grabbingStopping();
 
     virtual std::string setMaxTransferSize(const int& maxTransferSize);
 
     virtual std::string setGammaSelector(const int& gammaSelector);
 
     virtual std::string gammaEnable(const bool& enable);
+
+    virtual std::string getTemperatureState();
+
+    virtual float getCameraCoreTemperature();
 
 protected:
     typedef typename CameraTraitT::CBaslerInstantCameraT CBaslerInstantCameraT;
@@ -283,11 +287,13 @@ protected:
     typedef typename CameraTraitT::UserSetSelectorEnums UserSetSelectorEnums;
     typedef typename CameraTraitT::UserSetDefaultSelectorEnums UserSetDefaultSelectorEnums;
     typedef typename CameraTraitT::LineFormatEnums LineFormatEnums;
+    typedef typename CameraTraitT::TemperatureStateEnums TemperatureStateEnums;
+    typedef typename CameraTraitT::DeviceTemperatureSelectorEnums DeviceTemperatureSelectorEnums;
 
 
     CBaslerInstantCameraT* cam_;
 
-    // Each camera has it's own getter for GenApi accessors that are named
+    // Each camera has its own getter for GenApi accessors that are named
     // differently for USB and GigE
     GenApi::IFloat& exposureTime();
     GainType& gain();
@@ -297,6 +303,7 @@ protected:
     GainType& autoGainLowerLimit();
     GainType& autoGainUpperLimit();
     GenApi::IFloat& resultingFrameRate();
+
     AutoTargetBrightnessType& autoTargetBrightness();
 
     virtual bool setExtendedBrightness(const int& target_brightness,
@@ -309,6 +316,7 @@ protected:
 
     // We want different frame replacement strategies depending on acquisition method
     Pylon::EGrabStrategy grab_strategy_ = Pylon::GrabStrategy_OneByOne;
+
 };
 
 }  // namespace pylon_camera

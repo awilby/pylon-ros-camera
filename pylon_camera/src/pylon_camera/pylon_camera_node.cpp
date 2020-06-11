@@ -204,9 +204,9 @@ PylonCameraNode::PylonCameraNode()
     diagnostics_updater_.add("camera_availability", this, &PylonCameraNode::create_diagnostics);
     diagnostics_updater_.add("intrinsic_calibration", this, &PylonCameraNode::create_camera_info_diagnostics);
     diagnostics_trigger_ = nh_.createTimer(ros::Duration(2), &PylonCameraNode::diagnostics_timer_callback_, this);
-    componentStatusPublisher = nh_.advertise<dnb_msgs::ComponentStatus>("/pylon_camera_node/status", 5, true); // DNB component status publisher
-    currentParamsPublisher = nh_.advertise<camera_control_msgs::currentParams>("/pylon_camera_node/currentParams", 5, true); // current camera params publisher
-    cameraStatusPublisher = nh_.advertise<camera_control_msgs::cameraStatus>("/pylon_camera_node/cameraStatus", 5, true); // current camera status publisher
+    componentStatusPublisher = nh_.advertise<dnb_msgs::ComponentStatus>("status", 5, true); // DNB component status publisher
+    currentParamsPublisher = nh_.advertise<camera_control_msgs::currentParams>("currentParams", 5, true); // current camera params publisher
+    cameraStatusPublisher = nh_.advertise<camera_control_msgs::cameraStatus>("cameraStatus", 5, true); // current camera status publisher
 
 
     init();
@@ -2987,7 +2987,7 @@ void PylonCameraNode::cameraStatusPub()
       // Get the camera temperature state
       camera_status.state = pylon_camera_->getTemperatureState();
 
-      float coreTempVal = pylon_camera_->getCameraCoreTemperature(); 
+      float coreTempVal = pylon_camera_->getCameraCoreTemperature();
       float housTempVal = coreTempVal - 17.5;
 
       camera_status.core_temp.temperature = coreTempVal;

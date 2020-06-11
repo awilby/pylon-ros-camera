@@ -1,5 +1,4 @@
 # Monitor Current Camera Status
-Header header
 
 # Camera Temperature State
 string state

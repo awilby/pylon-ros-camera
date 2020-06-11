@@ -2987,6 +2987,10 @@ void PylonCameraNode::cameraStatusPub()
       // Get the camera temperature state
       camera_status.state = pylon_camera_->getTemperatureState();
 
+      // Timestamp the sensor readings
+      camera_status.core_temp.header.stamp = ros::Time::now();
+      camera_status.est_housing_temp.header.stamp = camera_status.core_temp.header.stamp;
+
       float coreTempVal = pylon_camera_->getCameraCoreTemperature();
       float housTempVal = coreTempVal - 17.5;
 
